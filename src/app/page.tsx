@@ -27,6 +27,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
           }
           profile {
             ranking
+            userAvatar
           }
           userCalendar {
             streak
@@ -36,44 +37,62 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
           activeDailyCodingChallengeQuestion {
             date
             userStatus
+            question {
+                title
+            }
           }
         }
       }
     `;
 
-    const res = await fetch('https://leetcode.com/graphql', {
+    const res = await fetch('https://leetcode.com/graphql/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Referer': `https://leetcode.com/${username}/`,
+        'Referer': `https://leetcode.com/`,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
       },
       body: JSON.stringify({
         query,
         variables: { username },
       }),
+      cache: 'no-store'
     });
 
     if (!res.ok) {
+        const errorBody = await res.text();
+        console.error('LeetCode API request failed:', res.status, errorBody);
+        return null;
+    }
+
+    const { data, errors } = await res.json();
+    
+    if (errors) {
+      console.error('LeetCode API returned errors:', errors);
       return null;
     }
 
-    const { data } = await res.json();
-    const matchedUser = data.matchedUser;
+    const matchedUser = data?.matchedUser;
 
     if (!matchedUser) {
+      console.error('No matched user found for:', username);
       return null;
     }
 
     const submissionHistory: { date: string; count: number }[] = [];
     if (matchedUser.userCalendar.submissionCalendar) {
-      const calendar = JSON.parse(matchedUser.userCalendar.submissionCalendar);
-      Object.keys(calendar).forEach(timestamp => {
-        const date = new Date(parseInt(timestamp) * 1000);
-        submissionHistory.push({
-          date: date.toISOString().split('T')[0],
-          count: calendar[timestamp],
+      try {
+        const calendar = JSON.parse(matchedUser.userCalendar.submissionCalendar);
+        Object.keys(calendar).forEach(timestamp => {
+            const date = new Date(parseInt(timestamp, 10) * 1000);
+            submissionHistory.push({
+            date: date.toISOString().split('T')[0],
+            count: calendar[timestamp],
+            });
         });
-      });
+      } catch (e) {
+        console.error("Failed to parse submission calendar", e);
+      }
     }
 
     const totalSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'All')?.count || 0;
@@ -81,10 +100,10 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     const mediumSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Medium')?.count || 0;
     const hardSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Hard')?.count || 0;
     const totalQuestions = data.allQuestionsCount.find((d: any) => d.difficulty === 'All')?.count || 0;
-
+    
     return {
       username: username,
-      contestRating: matchedUser.profile.ranking,
+      contestRating: matchedUser.profile.ranking > 0 ? matchedUser.profile.ranking : 0,
       globalRanking: matchedUser.profile.ranking,
       problemsSolved: {
         total: totalSolved,
