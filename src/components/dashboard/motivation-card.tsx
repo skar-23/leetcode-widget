@@ -1,7 +1,4 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -9,68 +6,63 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { getMotivationalMessageAction } from '@/app/actions';
-import type { MotivationalMessageInput } from '@/ai/flows/motivational-progress-messages';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '../ui/skeleton';
 
 type MotivationCardProps = {
-  stats: MotivationalMessageInput;
+  stats: {
+    username: string;
+    contestRating: number;
+    globalRanking: number;
+    problemsSolved: number;
+    problemsAttempted: number;
+    currentStreak: number;
+    solvedProblemOfTheDay: boolean;
+  };
   className?: string;
 };
 
-export function MotivationCard({ stats, className }: MotivationCardProps) {
-  const [title, setTitle] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+function generateStaticMotivationalMessage(stats: MotivationCardProps['stats']) {
+  const messages = [
+    {
+      title: "Keep Up the Momentum! 🚀",
+      message: `You've solved ${stats.problemsSolved} problems! ${stats.currentStreak > 0 ? `Your ${stats.currentStreak}-day streak shows real dedication.` : 'Start a new streak today!'} Every problem brings you closer to mastery.`
+    },
+    {
+      title: "Progress Spotlight ⭐",
+      message: `With a global rank of ${stats.globalRanking.toLocaleString()}, you're among the top coders! ${stats.solvedProblemOfTheDay ? 'Great job completing today\'s daily challenge!' : 'Don\'t forget to tackle today\'s daily problem.'}`
+    },
+    {
+      title: "Contest Champion 🏆",
+      message: `Your contest rating of ${stats.contestRating} reflects your problem-solving skills. ${stats.contestRating > 1500 ? 'You\'re performing at an advanced level!' : 'Keep practicing to reach the next milestone!'}`
+    }
+  ];
+  
+  // Simple selection based on stats
+  if (stats.currentStreak >= 7) {
+    return messages[0]; // Momentum message for good streak
+  } else if (stats.contestRating > 1400) {
+    return messages[2]; // Contest message for good rating
+  } else {
+    return messages[1]; // General progress message
+  }
+}
 
-  useEffect(() => {
-    const generateMessage = async () => {
-      setIsLoading(true);
-      setError(null);
-      setMessage(null);
-      const result = await getMotivationalMessageAction(stats);
-      if (result.success) {
-        setTitle(result.data.title);
-        setMessage(result.data.message);
-      } else {
-        setError(result.message);
-      }
-      setIsLoading(false);
-    };
-    generateMessage();
-  }, [stats]);
+export function MotivationCard({ stats, className }: MotivationCardProps) {
+  const motivationalContent = generateStaticMotivationalMessage(stats);
 
   return (
     <Card className={cn(className)}>
       <CardHeader>
-        <CardTitle>Motivational Analysis</CardTitle>
-        <CardDescription>AI-powered insights to keep you going.</CardDescription>
+        <CardTitle>Progress Insights</CardTitle>
+        <CardDescription>Celebrating your coding journey and achievements.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading && (
-          <div className="space-y-2">
-             <Skeleton className="h-5 w-1/3" />
-             <Skeleton className="h-4 w-full" />
-             <Skeleton className="h-4 w-4/5" />
-          </div>
-        )}
-        {message && !isLoading && (
-          <Alert>
-            <Sparkles className="h-4 w-4" />
-            <AlertTitle>{title}</AlertTitle>
-            <AlertDescription>{message}</AlertDescription>
-          </Alert>
-        )}
-        {error && !isLoading && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+        <Alert>
+          <Sparkles className="h-4 w-4" />
+          <AlertTitle>{motivationalContent.title}</AlertTitle>
+          <AlertDescription>{motivationalContent.message}</AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );
