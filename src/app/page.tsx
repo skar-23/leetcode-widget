@@ -150,7 +150,7 @@ export default async function Home() {
   return (
     <TooltipProvider>
       <div className="flex min-h-screen w-full flex-col bg-background">
-        <header className="sticky top-0 z-30 flex h-auto items-center justify-between border-b bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
+        <header className="sticky top-0 z-30 flex h-auto shrink-0 items-center justify-between border-b bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
           <div className="flex items-center gap-2">
             <LeetCodeIcon className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-semibold font-headline">
@@ -166,32 +166,34 @@ export default async function Home() {
           )}
 
           {userData && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <StatCard
-                title="Contest Rating"
-                value={userData.contestRating}
-                icon={<Trophy className="h-4 w-4 text-muted-foreground" />}
-              />
-              <StatCard
-                title="Problems Solved"
-                value={userData.problemsSolved.total}
-                icon={<BookOpenCheck className="h-4 w-4 text-muted-foreground" />}
-                description={`${userData.problemsAttempted} total problems`}
-              />
-              <ProblemOfDayCard
-                streak={userData.currentStreak}
-                completedToday={userData.solvedProblemOfTheDay}
-              />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+              <div className="lg:col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <StatCard
+                  title="Contest Rating"
+                  value={userData.contestRating}
+                  icon={<Trophy className="h-4 w-4 text-muted-foreground" />}
+                />
+                <StatCard
+                  title="Problems Solved"
+                  value={userData.problemsSolved.total}
+                  icon={<BookOpenCheck className="h-4 w-4 text-muted-foreground" />}
+                  description={`${userData.problemsAttempted} total problems`}
+                />
+                <ProblemOfDayCard
+                  streak={userData.currentStreak}
+                  completedToday={userData.solvedProblemOfTheDay}
+                />
+              </div>
 
               <SubmissionHeatmap
                 submissionHistory={userData.submissionHistory}
-                className="md:col-span-2 lg:col-span-3"
+                className="lg:col-span-3"
               />
 
               <BadgeShowcase
                 totalBadges={userData.badges.length}
-                latestBadge={userData.badges[0]}
-                className="lg:col-start-1"
+                latestBadge={userData.badges.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]}
+                className="lg:col-span-1"
               />
 
               <MotivationCard
@@ -204,7 +206,7 @@ export default async function Home() {
                   currentStreak: userData.currentStreak,
                   solvedProblemOfTheDay: userData.solvedProblemOfTheDay,
                 }}
-                className="md:col-span-2 lg:col-span-3"
+                className="lg:col-span-4"
               />
             </div>
           )}

@@ -23,12 +23,12 @@ export function BadgeShowcase({ totalBadges, latestBadge, className }: BadgeShow
     : null;
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("flex flex-col h-full", className)}>
       <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">Badges</CardTitle>
         <CardDescription className="text-2xl font-bold">{totalBadges}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center text-center">
+      <CardContent className="flex flex-grow flex-col items-center justify-center text-center">
         {badgeImageUrl ? (
           <Image
             src={badgeImageUrl}
