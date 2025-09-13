@@ -10,23 +10,63 @@ import { UserData } from '@/lib/data';
 
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
-    const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
+    const query = `
+      query getUserProfile($username: String!) {
+        allQuestionsCount {
+          difficulty
+          count
+        }
+        matchedUser(username: $username) {
+          username
+          submitStats: submitStatsGlobal {
+            acSubmissionNum {
+              difficulty
+              count
+              submissions
+            }
+          }
+          profile {
+            ranking
+          }
+          userCalendar {
+            streak
+            totalActiveDays
+            submissionCalendar
+          }
+          activeDailyCodingChallengeQuestion {
+            date
+            userStatus
+          }
+        }
+      }
+    `;
+
+    const res = await fetch('https://leetcode.com/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Referer': `https://leetcode.com/${username}/`,
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username },
+      }),
+    });
+
     if (!res.ok) {
-      // The API returns 404 for not found, but also other errors.
-      // We'll treat all errors as user not found for simplicity.
-      return null;
-    }
-    const data = await res.json();
-
-    if (data.status === 'error') {
       return null;
     }
 
-    // The API doesn't have all the fields we need, so we'll mock them.
-    // A more robust solution would find a better API or adjust the UI.
+    const { data } = await res.json();
+    const matchedUser = data.matchedUser;
+
+    if (!matchedUser) {
+      return null;
+    }
+
     const submissionHistory: { date: string; count: number }[] = [];
-    if (data.submissionCalendar) {
-      const calendar = JSON.parse(data.submissionCalendar);
+    if (matchedUser.userCalendar.submissionCalendar) {
+      const calendar = JSON.parse(matchedUser.userCalendar.submissionCalendar);
       Object.keys(calendar).forEach(timestamp => {
         const date = new Date(parseInt(timestamp) * 1000);
         submissionHistory.push({
@@ -36,21 +76,27 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
       });
     }
 
+    const totalSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'All')?.count || 0;
+    const easySolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Easy')?.count || 0;
+    const mediumSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Medium')?.count || 0;
+    const hardSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Hard')?.count || 0;
+    const totalQuestions = data.allQuestionsCount.find((d: any) => d.difficulty === 'All')?.count || 0;
+
     return {
       username: username,
-      contestRating: data.ranking,
-      globalRanking: data.ranking, // API doesn't provide this separately
+      contestRating: matchedUser.profile.ranking,
+      globalRanking: matchedUser.profile.ranking,
       problemsSolved: {
-        total: data.totalSolved,
-        easy: data.easySolved,
-        medium: data.mediumSolved,
-        hard: data.hardSolved,
+        total: totalSolved,
+        easy: easySolved,
+        medium: mediumSolved,
+        hard: hardSolved,
       },
-      problemsAttempted: data.totalQuestions,
-      currentStreak: 0, // Mocked
-      solvedProblemOfTheDay: data.recentAC.length > 0, // Heuristic
+      problemsAttempted: totalQuestions,
+      currentStreak: matchedUser.userCalendar.streak,
+      solvedProblemOfTheDay: matchedUser.activeDailyCodingChallengeQuestion?.userStatus === 'Finish',
       submissionHistory: submissionHistory,
-      latestBadge: { // Mocked
+      latestBadge: { // This remains mocked as it's not in the API
         name: 'Welcome!',
         icon: '1',
         date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
@@ -61,6 +107,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     return null;
   }
 }
+
 
 export default async function Home() {
   const username = 'scarlet23';
@@ -93,13 +140,13 @@ export default async function Home() {
                 title="Contest Rating"
                 value={userData.contestRating}
                 icon={<Trophy className="h-4 w-4 text-muted-foreground" />}
-                description={`Top ${((userData.contestRating / 20000) * 100).toFixed(0)}% this season`}
+                description={`Global Rank ${userData.globalRanking.toLocaleString()}`}
               />
               <StatCard
                 title="Problems Solved"
                 value={userData.problemsSolved.total}
                 icon={<BookOpenCheck className="h-4 w-4 text-muted-foreground" />}
-                description={`${userData.problemsAttempted} attempted`}
+                description={`${userData.problemsAttempted} total problems`}
               />
               <ProblemOfDayCard
                 streak={userData.currentStreak}
