@@ -3,14 +3,15 @@
 import {
   generateMotivationalMessage,
   type MotivationalMessageInput,
+  type MotivationalMessageOutput,
 } from '@/ai/flows/motivational-progress-messages';
 
 export async function getMotivationalMessageAction(
   stats: MotivationalMessageInput
-) {
+): Promise<{ success: true, data: MotivationalMessageOutput } | { success: false, message: string }> {
   try {
     const result = await generateMotivationalMessage(stats);
-    return { success: true, message: result.message };
+    return { success: true, data: result };
   } catch (error) {
     console.error('Error generating motivational message:', error);
     return {

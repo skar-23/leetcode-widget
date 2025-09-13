@@ -1,4 +1,4 @@
-import { Globe, BookOpenCheck, Trophy } from 'lucide-react';
+import { BookOpenCheck, Trophy } from 'lucide-react';
 import { LeetCodeIcon } from '@/components/icons/leetcode-icon';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { SubmissionHeatmap } from '@/components/dashboard/submission-heatmap';
@@ -54,6 +54,7 @@ export default function Home() {
                 problemsSolved: userData.problemsSolved.total,
                 problemsAttempted: userData.problemsAttempted,
                 currentStreak: userData.currentStreak,
+                solvedProblemOfTheDay: userData.solvedProblemOfTheDay,
               }}
               className="md:col-span-2"
             />
