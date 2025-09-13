@@ -9,12 +9,13 @@ import type { DotProps } from 'recharts';
 
 type RatingHistoryChartProps = {
   data: { rating: number; date: string }[];
-  maxRating: number;
 };
 
-const CustomizedDot = (props: DotProps & { payload?: any, index?: number, maxRating: number, dataLength: number }) => {
-  const { cx, cy, payload, maxRating, index } = props;
-
+const CustomizedDot = (props: DotProps & { payload?: any, index?: number, dataLength: number }) => {
+  const { cx, cy, payload, index, data } = props;
+  
+  const allRatings = (data as any[]).map(d => d.rating);
+  const maxRating = Math.max(...allRatings);
   const isMaxRating = payload && payload.rating === maxRating;
   const isFirstPoint = index === 0;
 
@@ -42,15 +43,19 @@ const CustomizedDot = (props: DotProps & { payload?: any, index?: number, maxRat
 };
 
 
-export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps) {
+export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
+    if (!data || data.length === 0) {
+        return null;
+    }
   const minRating = Math.min(...data.map(h => h.rating));
+  const maxRating = Math.max(...data.map(h => h.rating));
   const ratingBuffer = Math.max(50, (maxRating - minRating) * 0.1);
 
 
   return (
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+        <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
            <Tooltip
             cursor={false}
             content={<ChartTooltipContent hideIndicator />}
@@ -58,10 +63,6 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
           <XAxis
             hide={true}
             dataKey="date"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value) => value.slice(0, 3)}
           />
           <YAxis 
             hide={true}
@@ -72,7 +73,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
             type="linear"
             stroke="hsl(var(--chart-2))"
             strokeWidth={2}
-            dot={<CustomizedDot maxRating={maxRating} dataLength={data.length} />}
+            dot={<CustomizedDot data={data} dataLength={data.length} />}
             activeDot={{
               r: 6,
             }}
