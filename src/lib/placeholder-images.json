@@ -1,3 +1,10 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A gold medal badge for achievement.",
+      "imageUrl": "https://picsum.photos/seed/badge1/200/200",
+      "imageHint": "gold medal"
+    }
+  ]
 }
