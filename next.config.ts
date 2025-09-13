@@ -1,5 +1,8 @@
 import type {NextConfig} from 'next';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
@@ -37,7 +40,15 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       }
     ],
+    unoptimized: true, // Required for static export
   },
+  // Enable static export only for GitHub Pages deployment
+  ...(isGitHubPages && {
+    output: 'export',
+    trailingSlash: true,
+    basePath: '/leetcode-widget',
+    assetPrefix: '/leetcode-widget/',
+  }),
 };
 
 export default nextConfig;
