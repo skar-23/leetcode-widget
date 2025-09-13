@@ -38,8 +38,8 @@ export function ContestPerformanceCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-3 text-center gap-4">
-           <div>
+        <div className="flex justify-around text-center">
+           <div className="flex-1">
               <p className="text-sm text-muted-foreground">Contest Rating</p>
               <div className="flex items-center justify-center gap-2">
                  <p className="text-2xl font-bold">{rating}</p>
@@ -47,11 +47,11 @@ export function ContestPerformanceCard({
                  {trend === 'down' && <ArrowDown className="h-5 w-5 text-red-500" />}
               </div>
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-sm text-muted-foreground">Attended</p>
               <p className="text-2xl font-bold">{attended}</p>
             </div>
-           <div>
+           <div className="flex-1">
                 <p className="text-sm text-muted-foreground">Top</p>
                 <p className="text-2xl font-bold">{topPercentage}%</p>
             </div>
