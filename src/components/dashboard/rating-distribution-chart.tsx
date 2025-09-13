@@ -1,6 +1,6 @@
 'use client';
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Cell } from 'recharts';
 
 // Dummy data for distribution - replace with real data if available
 const distributionData = [
@@ -45,10 +45,9 @@ export function RatingDistributionChart({ topPercentage }: RatingDistributionCha
         <Bar
           dataKey="count"
           radius={[4, 4, 4, 4]}
-          fill="hsl(var(--muted))"
           >
            {distributionData.map((entry) => (
-            <div
+            <Cell
               key={`cell-${entry.rating}`}
               fill={entry.rating === userBucket ? 'hsl(var(--primary))' : 'hsl(var(--muted))'}
             />
