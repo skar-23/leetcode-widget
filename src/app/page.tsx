@@ -9,165 +9,45 @@ import { UserData } from '@/lib/data';
 import { ContestPerformanceCard } from '@/components/dashboard/contest-performance-card';
 import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 
-async function getLeetCodeData(username: string): Promise<UserData | null> {
-  try {
-    const query = `
-      query getUserProfile($username: String!) {
-        allQuestionsCount {
-          difficulty
-          count
-        }
-        matchedUser(username: $username) {
-          username
-          submitStats: submitStatsGlobal {
-            acSubmissionNum {
-              difficulty
-              count
-            }
-          }
-          profile {
-            ranking
-            userAvatar
-          }
-          userCalendar {
-            streak
-            totalActiveDays
-            submissionCalendar
-          }
-          badges {
-            id
-            name
-            icon
-            creationDate
-          }
-        }
-        userContestRanking(username: $username) {
-          rating
-          topPercentage
-          attendedContestsCount
-        }
-        userContestRankingHistory(username: $username) {
-          attended
-          rating
-          ranking
-          contest {
-            startTime
-          }
-        }
-        activeDailyCodingChallengeQuestion {
-          date
-          userStatus
-          question {
-            title
-          }
-        }
-      }
-    `;
-
-    const res = await fetch('https://leetcode.com/graphql/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Referer': `https://leetcode.com/${username}`,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-      },
-      body: JSON.stringify({
-        query,
-        variables: { username },
-      }),
-      cache: 'no-store'
-    });
-
-    if (!res.ok) {
-        const errorBody = await res.text();
-        console.error('LeetCode API request failed:', res.status, errorBody);
-        return null;
-    }
-
-    const { data, errors } = await res.json();
-    
-    if (errors) {
-      console.error('LeetCode API returned errors:', errors);
-      return null;
-    }
-
-    const matchedUser = data?.matchedUser;
-    const activeDailyQuestion = data?.activeDailyCodingChallengeQuestion;
-    const contestRanking = data?.userContestRanking;
-    const contestHistory = data?.userContestRankingHistory;
-
-    if (!matchedUser) {
-      console.error('No matched user found for:', username);
-      return null;
-    }
-
-    const submissionHistory: { date: string; count: number }[] = [];
-    if (matchedUser.userCalendar.submissionCalendar) {
-      try {
-        const calendar = JSON.parse(matchedUser.userCalendar.submissionCalendar);
-        Object.keys(calendar).forEach(timestamp => {
-            const date = new Date(parseInt(timestamp, 10) * 1000);
-            submissionHistory.push({
-            date: date.toISOString().split('T')[0],
-            count: calendar[timestamp],
-            });
-        });
-      } catch (e) {
-        console.error("Failed to parse submission calendar", e);
-      }
-    }
-
-    const totalSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'All')?.count || 0;
-    const easySolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Easy')?.count || 0;
-    const mediumSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Medium')?.count || 0;
-    const hardSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Hard')?.count || 0;
-    const totalQuestions = data.allQuestionsCount.find((d: any) => d.difficulty === 'All')?.count || 0;
-
-    const badges = matchedUser.badges
-      .map((badge: any) => ({
-        name: badge.name,
-        icon: badge.icon,
-        date: new Date(badge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-        creationTimestamp: parseInt(badge.creationDate, 10)
-      }))
-      .sort((a: any, b: any) => b.creationTimestamp - a.creationTimestamp);
-    
-    const ratingHistory = contestHistory
-        ?.filter((contest: any) => contest.attended)
-        .map((contest: any) => ({
-            rating: Math.round(contest.rating),
-            date: new Date(contest.contest.startTime * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
-        }));
-
-    return {
-      username: username,
-      contestRating: contestRanking?.rating ? Math.round(contestRanking.rating) : 0,
-      globalRanking: matchedUser.profile.ranking,
-      attendedContests: contestRanking?.attendedContestsCount || 0,
-      topPercentage: contestRanking?.topPercentage ? parseFloat(contestRanking.topPercentage.toFixed(2)) : 0,
-      contestHistory: ratingHistory || [],
-      problemsSolved: {
-        total: totalSolved,
-        easy: easySolved,
-        medium: mediumSolved,
-        hard: hardSolved,
-      },
-      problemsAttempted: totalQuestions,
-      currentStreak: matchedUser.userCalendar.streak,
-      solvedProblemOfTheDay: activeDailyQuestion?.userStatus === 'Finish',
-      submissionHistory: submissionHistory,
-      badges: badges,
-    };
-  } catch (error) {
-    console.error('Failed to fetch LeetCode data:', error);
-    return null;
-  }
-}
+// Mock data for testing chart responsiveness
+const mockUserData: UserData = {
+  username: 'test-user',
+  contestRating: 1547,
+  globalRanking: 12345,
+  attendedContests: 25,
+  topPercentage: 15.6,
+  contestHistory: [
+    { rating: 1200, date: 'Jan 2023' },
+    { rating: 1250, date: 'Feb 2023' },
+    { rating: 1300, date: 'Mar 2023' },
+    { rating: 1280, date: 'Apr 2023' },
+    { rating: 1350, date: 'May 2023' },
+    { rating: 1400, date: 'Jun 2023' },
+    { rating: 1420, date: 'Jul 2023' },
+    { rating: 1380, date: 'Aug 2023' },
+    { rating: 1450, date: 'Sep 2023' },
+    { rating: 1480, date: 'Oct 2023' },
+    { rating: 1520, date: 'Nov 2023' },
+    { rating: 1500, date: 'Dec 2023' },
+    { rating: 1540, date: 'Jan 2024' },
+    { rating: 1547, date: 'Feb 2024' },
+  ],
+  problemsSolved: {
+    total: 457,
+    easy: 185,
+    medium: 234,
+    hard: 38,
+  },
+  problemsAttempted: 2800,
+  currentStreak: 15,
+  solvedProblemOfTheDay: true,
+  submissionHistory: [],
+  badges: [],
+};
 
 
 export default async function Home() {
-  const username = 'scarlet23';
-  const userData = await getLeetCodeData(username);
+  const userData = mockUserData;
 
   return (
     <TooltipProvider>
@@ -181,12 +61,6 @@ export default async function Home() {
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6">
-          {!userData && (
-             <div className="text-center text-muted-foreground">
-                Could not find data for user: <strong>{username}</strong>. Please check the username and try again.
-             </div>
-          )}
-
           {userData && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
                <div className="lg:col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
