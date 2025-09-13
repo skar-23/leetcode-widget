@@ -114,11 +114,11 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
 
     const badges = matchedUser.badges
       .filter((b: any) => b.creationDate)
-      .sort((a: any, b: any) => b.creationDate - a.creationDate)
+      .sort((a: any, b: any) => parseInt(b.creationDate, 10) - parseInt(a.creationDate, 10))
       .map((badge: any) => ({
         name: badge.name,
         icon: badge.icon,
-        date: new Date(badge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        date: new Date(parseInt(badge.creationDate, 10) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
       }));
     
     return {
