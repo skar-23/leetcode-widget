@@ -56,7 +56,7 @@ export function ContestPerformanceCard({
                 <p className="text-2xl font-bold">{topPercentage}%</p>
             </div>
         </div>
-        <div className="relative h-52 md:h-64 lg:h-72">
+        <div className="relative h-52 overflow-hidden md:h-64 lg:h-72">
             <RatingHistoryChart data={history} maxRating={maxRating} />
         </div>
       </CardContent>
