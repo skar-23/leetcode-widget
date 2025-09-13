@@ -65,7 +65,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
           />
           <Line
             dataKey="rating"
-            type="monotone"
+            type="linear"
             stroke="hsl(var(--chart-2))"
             strokeWidth={2}
             dot={<CustomizedDot maxRating={maxRating} />}
