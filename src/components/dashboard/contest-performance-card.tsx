@@ -24,7 +24,7 @@ export function ContestPerformanceCard({
   history,
   className,
 }: ContestPerformanceCardProps) {
-  const lastRating = history.length > 0 ? history[history.length - 1].rating : 0;
+  const lastRating = history.length > 1 ? history[history.length - 1].rating : 0;
   const secondLastRating = history.length > 1 ? history[history.length - 2].rating : 0;
   const trend = lastRating > secondLastRating ? 'up' : lastRating < secondLastRating ? 'down' : 'same';
   const maxRating = Math.max(...history.map(h => h.rating));
@@ -38,9 +38,8 @@ export function ContestPerformanceCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="col-span-1 md:col-span-2 space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
+        <div className="col-span-1 flex flex-col justify-around text-center gap-4">
+           <div>
               <p className="text-sm text-muted-foreground">Contest Rating</p>
               <div className="flex items-center justify-center gap-2">
                  <p className="text-2xl font-bold">{rating}</p>
@@ -52,16 +51,13 @@ export function ContestPerformanceCard({
               <p className="text-sm text-muted-foreground">Attended</p>
               <p className="text-2xl font-bold">{attended}</p>
             </div>
-          </div>
-          <div className="h-[200px]">
-            <RatingHistoryChart data={history} maxRating={maxRating} />
-          </div>
-        </div>
-        <div className="col-span-1 flex flex-col justify-center">
-           <div className='text-center'>
+           <div>
                 <p className="text-sm text-muted-foreground">Top</p>
                 <p className="text-2xl font-bold">{topPercentage}%</p>
             </div>
+        </div>
+        <div className="col-span-1 md:col-span-2 h-[200px] min-w-0">
+            <RatingHistoryChart data={history} maxRating={maxRating} />
         </div>
       </CardContent>
     </Card>

@@ -4,10 +4,10 @@ import { StatCard } from '@/components/dashboard/stat-card';
 import { SubmissionHeatmap } from '@/components/dashboard/submission-heatmap';
 import { BadgeShowcase } from '@/components/dashboard/badge-showcase';
 import { MotivationCard } from '@/components/dashboard/motivation-card';
-import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { UserData } from '@/lib/data';
 import { ContestPerformanceCard } from '@/components/dashboard/contest-performance-card';
+import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
@@ -128,7 +128,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
         name: badge.name,
         icon: badge.icon,
         date: new Date(badge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-        creationTimestamp: badge.creationDate
+        creationTimestamp: parseInt(badge.creationDate, 10)
       }))
       .sort((a: any, b: any) => b.creationTimestamp - a.creationTimestamp);
     
