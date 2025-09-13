@@ -21,12 +21,12 @@ export function BadgeCard({ badge, className }: BadgeCardProps) {
   const badgeImageUrl = isUrl ? badge.icon : badge.icon ? `https://leetcode.com${badge.icon}` : null;
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("flex flex-col h-full", className)}>
       <CardHeader>
-        <CardTitle>Most Recent Badge</CardTitle>
+        <CardTitle className="truncate">{badge.name}</CardTitle>
         {badge.date && <CardDescription>Awarded on {badge.date}</CardDescription>}
       </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
+      <CardContent className="flex flex-col items-center justify-center gap-4 text-center flex-grow">
         {badgeImageUrl ? (
           <Image
             src={badgeImageUrl}
@@ -40,7 +40,6 @@ export function BadgeCard({ badge, className }: BadgeCardProps) {
             <Award className="h-12 w-12 text-muted-foreground" />
           </div>
         )}
-        <p className="font-semibold text-lg">{badge.name}</p>
       </CardContent>
     </Card>
   );

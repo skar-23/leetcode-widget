@@ -7,6 +7,14 @@ import { MotivationCard } from '@/components/dashboard/motivation-card';
 import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { UserData } from '@/lib/data';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
@@ -112,9 +120,14 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     const hardSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Hard')?.count || 0;
     const totalQuestions = data.allQuestionsCount.find((d: any) => d.difficulty === 'All')?.count || 0;
 
-    const latestBadge = matchedUser.badges
+    const badges = matchedUser.badges
       .filter((b: any) => b.creationDate)
-      .sort((a: any, b: any) => b.creationDate - a.creationDate)[0];
+      .sort((a: any, b: any) => b.creationDate - a.creationDate)
+      .map((badge: any) => ({
+        name: badge.name,
+        icon: badge.icon,
+        date: new Date(badge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      }));
     
     return {
       username: username,
@@ -130,15 +143,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
       currentStreak: matchedUser.userCalendar.streak,
       solvedProblemOfTheDay: activeDailyQuestion?.userStatus === 'Finish',
       submissionHistory: submissionHistory,
-      latestBadge: latestBadge ? {
-        name: latestBadge.name,
-        icon: latestBadge.icon,
-        date: new Date(latestBadge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      } : {
-        name: 'No badges yet',
-        icon: '',
-        date: ''
-      },
+      badges: badges,
     };
   } catch (error) {
     console.error('Failed to fetch LeetCode data:', error);
@@ -192,7 +197,30 @@ export default async function Home() {
                 className="md:col-span-2 lg:col-span-3"
               />
 
-              <BadgeCard badge={userData.latestBadge} className="md:col-span-1" />
+              <Card className="md:col-span-3">
+                <CardHeader>
+                  <CardTitle>Your Badges</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Carousel opts={{
+                    align: "start",
+                  }}
+                  className="w-full">
+                    <CarouselContent>
+                      {userData.badges.map((badge, index) => (
+                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                          <div className="p-1 h-full">
+                            <BadgeCard badge={badge} className="h-full" />
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </CardContent>
+              </Card>
+
 
               <MotivationCard
                 stats={{
@@ -204,7 +232,7 @@ export default async function Home() {
                   currentStreak: userData.currentStreak,
                   solvedProblemOfTheDay: userData.solvedProblemOfTheDay,
                 }}
-                className="md:col-span-2"
+                className="md:col-span-3"
               />
             </div>
           )}

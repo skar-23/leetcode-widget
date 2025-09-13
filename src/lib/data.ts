@@ -12,9 +12,9 @@ export type UserData = {
   currentStreak: number;
   solvedProblemOfTheDay: boolean;
   submissionHistory: { date: string; count: number }[];
-  latestBadge: {
+  badges: {
     name: string;
     icon: string;
     date: string;
-  };
+  }[];
 };
