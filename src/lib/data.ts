@@ -10,6 +10,7 @@ export type UserData = {
   };
   problemsAttempted: number;
   currentStreak: number;
+  solvedProblemOfTheDay: boolean;
   submissionHistory: { date: string; count: number }[];
   latestBadge: {
     name: string;
@@ -48,6 +49,7 @@ export const userData: UserData = {
   },
   problemsAttempted: 580,
   currentStreak: 25,
+  solvedProblemOfTheDay: true,
   submissionHistory: generateSubmissionHistory(),
   latestBadge: {
     name: '50 Days Badge',

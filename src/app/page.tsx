@@ -1,4 +1,4 @@
-import { Flame, Globe, BookOpenCheck, Trophy } from 'lucide-react';
+import { Globe, BookOpenCheck, Trophy } from 'lucide-react';
 import { LeetCodeIcon } from '@/components/icons/leetcode-icon';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { SubmissionHeatmap } from '@/components/dashboard/submission-heatmap';
@@ -40,21 +40,17 @@ export default function Home() {
               icon={<BookOpenCheck className="h-4 w-4 text-muted-foreground" />}
               description={`${userData.problemsAttempted} attempted`}
             />
-            <StatCard
-              title="Current Streak"
-              value={`${userData.currentStreak} Days`}
-              icon={<Flame className="h-4 w-4 text-accent" />}
-              description="Keep the fire burning!"
+            <ProblemOfDayCard 
+              streak={userData.currentStreak}
+              completedToday={userData.solvedProblemOfTheDay}
             />
 
             <SubmissionHeatmap
               submissionHistory={userData.submissionHistory}
               className="md:col-span-2 lg:col-span-4"
             />
-
-            <ProblemOfDayCard className="md:col-span-2 lg:col-span-4" />
             
-            <BadgeCard badge={userData.latestBadge} className="md:col-span-1 lg:col-span-2"/>
+            <BadgeCard badge={userData.latestBadge} className="md:col-span-2"/>
 
             <MotivationCard
               stats={{
@@ -65,7 +61,7 @@ export default function Home() {
                 problemsAttempted: userData.problemsAttempted,
                 currentStreak: userData.currentStreak,
               }}
-              className="md:col-span-1 lg:col-span-2"
+              className="md:col-span-2"
             />
           </div>
         </main>

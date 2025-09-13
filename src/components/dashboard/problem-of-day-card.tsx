@@ -1,44 +1,44 @@
-import { Button } from '@/components/ui/button';
+import { Flame } from 'lucide-react';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type ProblemOfDayCardProps = {
   className?: string;
+  streak: number;
+  completedToday: boolean;
 };
 
-export function ProblemOfDayCard({ className }: ProblemOfDayCardProps) {
+export function ProblemOfDayCard({ className, streak, completedToday }: ProblemOfDayCardProps) {
+  const flameColor = completedToday ? 'text-accent' : 'text-muted-foreground/50';
+  const tooltipText = completedToday ? "You've completed the problem of the day. Great job!" : "Keep the streak going! Solve today's problem.";
+
   return (
-    <Card className={cn(className)}>
-      <CardHeader>
-        <CardTitle>Problem of the Day</CardTitle>
-        <CardDescription>
-          Stay consistent, solve one problem every day.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col items-start gap-4 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="font-semibold">234. Palindrome Linked List</h3>
-            <p className="text-sm text-muted-foreground">
-              Difficulty: <span className="text-primary font-medium">Easy</span>
-            </p>
-          </div>
-          <Button asChild>
+    <Card className={cn("flex flex-col items-center justify-center", className)}>
+       <CardContent className="flex items-center justify-center p-6">
+        <Tooltip>
+          <TooltipTrigger>
             <a
               href="https://leetcode.com/problem-of-the-day/"
               target="_blank"
               rel="noopener noreferrer"
+              className="flex items-center gap-2"
             >
-              Solve Problem
+              <Flame className={cn("h-8 w-8", flameColor)} />
+              <span className="text-3xl font-bold">{streak}</span>
             </a>
-          </Button>
-        </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltipText}</p>
+          </TooltipContent>
+        </Tooltip>
       </CardContent>
     </Card>
   );
