@@ -41,7 +41,7 @@ const CustomizedDot = (props: DotProps & { payload?: any, maxRating: number }) =
 
 export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps) {
   const minRating = Math.min(...data.map(h => h.rating));
-  const ratingBuffer = Math.max(20, (maxRating - minRating) * 0.1);
+  const ratingBuffer = Math.max(50, (maxRating - minRating) * 0.1);
 
 
   return (
@@ -61,11 +61,8 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
             tickFormatter={(value) => value.slice(0, 3)}
           />
           <YAxis 
-            axisLine={false}
-            tickLine={false}
-            tickMargin={8}
+            hide={true}
             domain={[minRating - ratingBuffer, maxRating + ratingBuffer]}
-            tickFormatter={(value) => Math.round(value as number).toString()}
           />
           <Line
             dataKey="rating"
