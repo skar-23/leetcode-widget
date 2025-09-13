@@ -31,7 +31,7 @@ export function ProblemOfDayCard({ className, streak, completedToday }: ProblemO
               rel="noopener noreferrer"
               className="flex items-center gap-2"
             >
-              <Flame className={cn("h-8 w-8", flameColor)} />
+              <Flame className={cn("h-8 w-8", flameColor, completedToday && 'fill-accent')} />
               <span className="text-3xl font-bold">{streak}</span>
             </a>
           </TooltipTrigger>
