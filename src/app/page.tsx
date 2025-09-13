@@ -49,8 +49,8 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Referer': `https://leetcode.com/`,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        'Referer': `https://leetcode.com/${username}`,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
       },
       body: JSON.stringify({
         query,
@@ -159,7 +159,6 @@ export default async function Home() {
                 title="Contest Rating"
                 value={userData.contestRating}
                 icon={<Trophy className="h-4 w-4 text-muted-foreground" />}
-                description={`Global Rank ${userData.globalRanking.toLocaleString()}`}
               />
               <StatCard
                 title="Problems Solved"
