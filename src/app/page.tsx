@@ -33,6 +33,12 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
             totalActiveDays
             submissionCalendar
           }
+          badges {
+            id
+            name
+            icon
+            creationDate
+          }
         }
         userContestRanking(username: $username) {
           rating
@@ -105,6 +111,10 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     const mediumSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Medium')?.count || 0;
     const hardSolved = matchedUser.submitStats.acSubmissionNum.find((d: any) => d.difficulty === 'Hard')?.count || 0;
     const totalQuestions = data.allQuestionsCount.find((d: any) => d.difficulty === 'All')?.count || 0;
+
+    const latestBadge = matchedUser.badges
+      .filter((b: any) => b.creationDate)
+      .sort((a: any, b: any) => b.creationDate - a.creationDate)[0];
     
     return {
       username: username,
@@ -120,10 +130,14 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
       currentStreak: matchedUser.userCalendar.streak,
       solvedProblemOfTheDay: activeDailyQuestion?.userStatus === 'Finish',
       submissionHistory: submissionHistory,
-      latestBadge: { // This remains mocked as it's not in the API
-        name: 'Welcome!',
-        icon: '1',
-        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      latestBadge: latestBadge ? {
+        name: latestBadge.name,
+        icon: latestBadge.icon,
+        date: new Date(latestBadge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      } : {
+        name: 'No badges yet',
+        icon: '',
+        date: ''
       },
     };
   } catch (error) {
@@ -146,9 +160,6 @@ export default async function Home() {
             <h1 className="text-xl font-semibold font-headline">
               LeetCode Progress Tracker
             </h1>
-          </div>
-           <div className="text-sm font-medium text-foreground">
-            Welcome, {username}!
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6">
