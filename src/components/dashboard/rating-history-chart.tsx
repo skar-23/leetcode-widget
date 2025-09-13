@@ -54,6 +54,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
             content={<ChartTooltipContent hideIndicator />}
           />
           <XAxis
+            hide={true}
             dataKey="date"
             tickLine={false}
             axisLine={false}
