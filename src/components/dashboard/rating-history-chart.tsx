@@ -12,10 +12,13 @@ type RatingHistoryChartProps = {
   maxRating: number;
 };
 
-const CustomizedDot = (props: DotProps & { payload?: any, maxRating: number }) => {
-  const { cx, cy, stroke, payload, maxRating } = props;
+const CustomizedDot = (props: DotProps & { payload?: any, index?: number, maxRating: number, dataLength: number }) => {
+  const { cx, cy, payload, maxRating, index } = props;
 
-  if (payload && payload.rating === maxRating) {
+  const isMaxRating = payload && payload.rating === maxRating;
+  const isFirstPoint = index === 0;
+
+  if (isMaxRating || isFirstPoint) {
     return (
       <Dot
         cx={cx}
@@ -48,7 +51,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-           <CartesianGrid vertical={false} stroke="transparent" />
+           <CartesianGrid vertical={false} stroke="hsl(var(--muted))" />
            <Tooltip
             cursor={false}
             content={<ChartTooltipContent hideIndicator />}
@@ -70,7 +73,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
             type="linear"
             stroke="hsl(var(--chart-2))"
             strokeWidth={2}
-            dot={<CustomizedDot maxRating={maxRating} />}
+            dot={<CustomizedDot maxRating={maxRating} dataLength={data.length} />}
             activeDot={{
               r: 6,
             }}
