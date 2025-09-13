@@ -1,7 +1,6 @@
 import { Flame, Globe, BookOpenCheck, Trophy } from 'lucide-react';
 import { LeetCodeIcon } from '@/components/icons/leetcode-icon';
 import { StatCard } from '@/components/dashboard/stat-card';
-import { DifficultyChart } from '@/components/dashboard/difficulty-chart';
 import { SubmissionHeatmap } from '@/components/dashboard/submission-heatmap';
 import { BadgeCard } from '@/components/dashboard/badge-card';
 import { MotivationCard } from '@/components/dashboard/motivation-card';
@@ -53,12 +52,7 @@ export default function Home() {
               className="md:col-span-2 lg:col-span-4"
             />
 
-            <DifficultyChart
-              data={userData.problemsSolved}
-              className="md:col-span-2 lg:col-span-2"
-            />
-
-            <ProblemOfDayCard className="md:col-span-2 lg:col-span-2" />
+            <ProblemOfDayCard className="md:col-span-2 lg:col-span-4" />
             
             <BadgeCard badge={userData.latestBadge} className="md:col-span-1 lg:col-span-2"/>
 
