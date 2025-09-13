@@ -53,7 +53,7 @@ Current LeetCode Statistics:
   1. Congratulate them on their consistency (e.g., "Great work!", "Consistency is key!").
   2. Mention their current streak day (e.g., "That's {{currentStreak}} days in a row!").
   3. Encourage them about their next badge. The next major badge is at 100 days. Calculate how many days are left to reach the 100-day badge. (e.g., "You're only ${100 - Number("{{currentStreak}}")} days away from the 100-day badge!").
-  4. Suggest solving more problems. Calculate how many more problems they could solve by the end of the year (December 31st) if they solve 2 more problems today and maintain that pace. Today is ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}. The end of the year is December 31st.
+  4. Suggest solving more problems. Calculate how many more problems they could solve by the end of the year (December 31st) if they solve 2 more problems today and maintain that pace. Combine this with their current solved problems to show a total potential count. Today is ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}. The end of the year is December 31st.
   5. The title should be encouraging and positive.
 {{else}}
   The user HAS NOT solved the problem of the day yet.
