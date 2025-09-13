@@ -11,7 +11,7 @@ import { UserData } from '@/lib/data';
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
     const query = `
-      query userContestRankingInfo($username: String!) {
+      query getUserProfile($username: String!) {
         allQuestionsCount {
           difficulty
           count
@@ -22,7 +22,6 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
             acSubmissionNum {
               difficulty
               count
-              submissions
             }
           }
           profile {
@@ -34,10 +33,10 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
             totalActiveDays
             submissionCalendar
           }
-          contestRanking {
-            rating
-            topPercentage
-          }
+        }
+        userContestRanking(username: $username) {
+          rating
+          topPercentage
         }
         activeDailyCodingChallengeQuestion {
           date
@@ -78,6 +77,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
 
     const matchedUser = data?.matchedUser;
     const activeDailyQuestion = data?.activeDailyCodingChallengeQuestion;
+    const contestRanking = data?.userContestRanking;
 
     if (!matchedUser) {
       console.error('No matched user found for:', username);
@@ -108,7 +108,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     
     return {
       username: username,
-      contestRating: matchedUser.contestRanking?.rating ? Math.round(matchedUser.contestRanking.rating) : 0,
+      contestRating: contestRanking?.rating ? Math.round(contestRanking.rating) : 0,
       globalRanking: matchedUser.profile.ranking,
       problemsSolved: {
         total: totalSolved,
