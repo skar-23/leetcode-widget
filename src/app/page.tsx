@@ -8,12 +8,6 @@ import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { UserData } from '@/lib/data';
 
-type HomeProps = {
-  searchParams: {
-    username?: string;
-  };
-};
-
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
     const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
@@ -68,40 +62,25 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
   }
 }
 
-export default async function Home({ searchParams }: HomeProps) {
-  const username = searchParams.username ?? 'satorugojo';
+export default async function Home() {
+  const username = 'scarlet23';
   const userData = await getLeetCodeData(username);
 
   return (
     <TooltipProvider>
       <div className="flex min-h-screen w-full flex-col bg-background">
-        <header className="sticky top-0 z-30 flex h-auto items-center gap-4 border-b bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
+        <header className="sticky top-0 z-30 flex h-auto items-center justify-between border-b bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 sm:py-4">
           <div className="flex items-center gap-2">
             <LeetCodeIcon className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-semibold font-headline">
               LeetCode Progress Tracker
             </h1>
           </div>
+           <div className="text-sm font-medium text-foreground">
+            Welcome, {username}!
+          </div>
         </header>
         <main className="flex-1 p-4 sm:p-6">
-          <div className="mx-auto mb-8 max-w-md">
-            <form className="flex w-full items-center space-x-2">
-              <input
-                type="text"
-                name="username"
-                placeholder="Enter your LeetCode username"
-                defaultValue={username}
-                className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-              >
-                Fetch
-              </button>
-            </form>
-          </div>
-
           {!userData && (
              <div className="text-center text-muted-foreground">
                 Could not find data for user: <strong>{username}</strong>. Please check the username and try again.
