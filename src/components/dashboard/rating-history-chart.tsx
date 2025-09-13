@@ -1,6 +1,6 @@
 'use client';
 
-import { Line, LineChart, Tooltip, XAxis, Dot, YAxis, ResponsiveContainer } from 'recharts';
+import { Line, LineChart, Tooltip, XAxis, Dot, YAxis, ResponsiveContainer, CartesianGrid } from 'recharts';
 import {
   ChartTooltipContent,
   ChartContainer,
@@ -11,10 +11,10 @@ type RatingHistoryChartProps = {
   data: { rating: number; date: string }[];
 };
 
-const CustomizedDot = (props: DotProps & { payload?: any, index?: number, dataLength: number }) => {
+const CustomizedDot = (props: DotProps & { payload?: any, index?: number, data: any[] }) => {
   const { cx, cy, payload, index, data } = props;
   
-  const allRatings = (data as any[]).map(d => d.rating);
+  const allRatings = data.map(d => d.rating);
   const maxRating = Math.max(...allRatings);
   const isMaxRating = payload && payload.rating === maxRating;
   const isFirstPoint = index === 0;
@@ -56,6 +56,7 @@ export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
+           <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border))" />
            <Tooltip
             cursor={false}
             content={<ChartTooltipContent hideIndicator />}
@@ -73,7 +74,7 @@ export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
             type="linear"
             stroke="hsl(var(--chart-2))"
             strokeWidth={2}
-            dot={<CustomizedDot data={data} dataLength={data.length} />}
+            dot={<CustomizedDot data={data} />}
             activeDot={{
               r: 6,
             }}
