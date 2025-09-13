@@ -69,8 +69,8 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const username = searchParams.username;
-  const userData = username ? await getLeetCodeData(username) : null;
+  const username = searchParams.username ?? 'satorugojo';
+  const userData = await getLeetCodeData(username);
 
   return (
     <TooltipProvider>
@@ -102,7 +102,7 @@ export default async function Home({ searchParams }: HomeProps) {
             </form>
           </div>
 
-          {username && !userData && (
+          {!userData && (
              <div className="text-center text-muted-foreground">
                 Could not find data for user: <strong>{username}</strong>. Please check the username and try again.
              </div>
