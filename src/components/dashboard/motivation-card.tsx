@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { Sparkles, Info } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -9,68 +8,59 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { getMotivationalMessageAction } from '@/app/actions';
-import type { MotivationalMessageInput } from '@/ai/flows/motivational-progress-messages';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '../ui/skeleton';
 
 type MotivationCardProps = {
-  stats: MotivationalMessageInput;
+  stats: {
+    username: string;
+    contestRating: number;
+    globalRanking: number;
+    problemsSolved: number;
+    problemsAttempted: number;
+    currentStreak: number;
+    solvedProblemOfTheDay: boolean;
+  };
   className?: string;
 };
 
 export function MotivationCard({ stats, className }: MotivationCardProps) {
-  const [title, setTitle] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Generate a simple motivational message based on stats without AI
+  const generateStaticMessage = () => {
+    if (stats.solvedProblemOfTheDay) {
+      return {
+        title: "Great Job Today! 🎉",
+        message: `You've solved today's problem and maintained your ${stats.currentStreak}-day streak! Keep up the excellent work, ${stats.username}. You've solved ${stats.problemsSolved} problems so far - every problem brings you closer to mastery!`
+      };
+    } else {
+      return {
+        title: "Ready for Today's Challenge? 💪",
+        message: `Time to tackle today's problem, ${stats.username}! You're on a ${stats.currentStreak}-day streak with ${stats.problemsSolved} problems solved. Every problem you solve strengthens your coding skills!`
+      };
+    }
+  };
 
-  useEffect(() => {
-    const generateMessage = async () => {
-      setIsLoading(true);
-      setError(null);
-      setMessage(null);
-      const result = await getMotivationalMessageAction(stats);
-      if (result.success) {
-        setTitle(result.data.title);
-        setMessage(result.data.message);
-      } else {
-        setError(result.message);
-      }
-      setIsLoading(false);
-    };
-    generateMessage();
-  }, [stats]);
+  const { title, message } = generateStaticMessage();
 
   return (
     <Card className={cn(className)}>
       <CardHeader>
-        <CardTitle>Motivational Analysis</CardTitle>
-        <CardDescription>AI-powered insights to keep you going.</CardDescription>
+        <CardTitle>Progress Motivation</CardTitle>
+        <CardDescription>Keep pushing forward with your coding journey!</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading && (
-          <div className="space-y-2">
-             <Skeleton className="h-5 w-1/3" />
-             <Skeleton className="h-4 w-full" />
-             <Skeleton className="h-4 w-4/5" />
-          </div>
-        )}
-        {message && !isLoading && (
-          <Alert>
-            <Sparkles className="h-4 w-4" />
-            <AlertTitle>{title}</AlertTitle>
-            <AlertDescription>{message}</AlertDescription>
-          </Alert>
-        )}
-        {error && !isLoading && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+        <Alert>
+          <Sparkles className="h-4 w-4" />
+          <AlertTitle>{title}</AlertTitle>
+          <AlertDescription>{message}</AlertDescription>
+        </Alert>
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Static Export Mode</AlertTitle>
+          <AlertDescription>
+            AI-powered insights are disabled in static export mode. This app can be deployed as static files to any hosting platform.
+          </AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );

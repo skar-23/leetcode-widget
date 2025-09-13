@@ -75,7 +75,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
         query,
         variables: { username },
       }),
-      cache: 'no-store'
+      // Remove cache: 'no-store' for static export compatibility
     });
 
     if (!res.ok) {
