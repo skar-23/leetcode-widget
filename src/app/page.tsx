@@ -2,19 +2,11 @@ import { BookOpenCheck, Trophy } from 'lucide-react';
 import { LeetCodeIcon } from '@/components/icons/leetcode-icon';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { SubmissionHeatmap } from '@/components/dashboard/submission-heatmap';
-import { BadgeCard } from '@/components/dashboard/badge-card';
+import { BadgeShowcase } from '@/components/dashboard/badge-showcase';
 import { MotivationCard } from '@/components/dashboard/motivation-card';
 import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { UserData } from '@/lib/data';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
@@ -197,30 +189,11 @@ export default async function Home() {
                 className="md:col-span-2 lg:col-span-3"
               />
 
-              <Card className="md:col-span-3">
-                <CardHeader>
-                  <CardTitle>Your Badges</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Carousel opts={{
-                    align: "start",
-                  }}
-                  className="w-full">
-                    <CarouselContent>
-                      {userData.badges.map((badge, index) => (
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                          <div className="p-1 h-full">
-                            <BadgeCard badge={badge} className="h-full" />
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                </CardContent>
-              </Card>
-
+              <BadgeShowcase
+                totalBadges={userData.badges.length}
+                latestBadge={userData.badges[0]}
+                className="lg:col-start-1"
+              />
 
               <MotivationCard
                 stats={{
@@ -232,7 +205,7 @@ export default async function Home() {
                   currentStreak: userData.currentStreak,
                   solvedProblemOfTheDay: userData.solvedProblemOfTheDay,
                 }}
-                className="md:col-span-3"
+                className="md:col-span-3 lg:col-span-2"
               />
             </div>
           )}

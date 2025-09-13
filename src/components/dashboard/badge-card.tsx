@@ -11,7 +11,7 @@ import type { UserData } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
 type BadgeCardProps = {
-  badge: UserData['latestBadge'];
+  badge: UserData['badges'][0];
   className?: string;
 };
 
