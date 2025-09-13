@@ -137,8 +137,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
         .map((contest: any) => ({
             rating: Math.round(contest.rating),
             date: new Date(contest.contest.startTime * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
-        }))
-        .slice(-15); // get last 15 contests
+        }));
 
     return {
       username: username,

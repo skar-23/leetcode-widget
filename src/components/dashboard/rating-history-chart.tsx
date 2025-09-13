@@ -47,8 +47,8 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
   return (
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-           <CartesianGrid vertical={false} strokeDasharray="3 3" />
+        <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+           <CartesianGrid vertical={false} stroke="transparent" />
            <Tooltip
             cursor={false}
             content={<ChartTooltipContent hideIndicator />}
