@@ -21,18 +21,12 @@ export default function Home() {
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <StatCard
               title="Contest Rating"
               value={userData.contestRating}
               icon={<Trophy className="h-4 w-4 text-muted-foreground" />}
               description="Top 10% this season"
-            />
-            <StatCard
-              title="Global Ranking"
-              value={`#${userData.globalRanking.toLocaleString()}`}
-              icon={<Globe className="h-4 w-4 text-muted-foreground" />}
-              description="Keep climbing!"
             />
             <StatCard
               title="Problems Solved"
@@ -47,10 +41,10 @@ export default function Home() {
 
             <SubmissionHeatmap
               submissionHistory={userData.submissionHistory}
-              className="md:col-span-2 lg:col-span-4"
+              className="md:col-span-2 lg:col-span-3"
             />
             
-            <BadgeCard badge={userData.latestBadge} className="md:col-span-2"/>
+            <BadgeCard badge={userData.latestBadge} className="md:col-span-1" />
 
             <MotivationCard
               stats={{
