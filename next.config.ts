@@ -35,7 +35,12 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       }
     ],
+    unoptimized: true, // Required for static export
   },
+  output: 'export', // Enable static export for GitHub Pages
+  trailingSlash: true, // Add trailing slash for GitHub Pages
+  basePath: process.env.NODE_ENV === 'production' ? '/leetcode-widget' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/leetcode-widget/' : '',
 };
 
 export default nextConfig;

@@ -75,7 +75,8 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
         query,
         variables: { username },
       }),
-      cache: 'no-store'
+      // Remove cache: 'no-store' to allow static generation
+      next: { revalidate: 3600 } // Revalidate every hour in production
     });
 
     if (!res.ok) {
