@@ -205,7 +205,7 @@ export default async function Home() {
                   currentStreak: userData.currentStreak,
                   solvedProblemOfTheDay: userData.solvedProblemOfTheDay,
                 }}
-                className="md:col-span-3 lg:col-span-2"
+                className="md:col-span-2 lg:col-span-3"
               />
             </div>
           )}
