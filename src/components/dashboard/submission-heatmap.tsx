@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { subDays, format, getDay } from 'date-fns';
+import { startOfMonth, endOfMonth, eachDayOfInterval, format, getDay } from 'date-fns';
 
 type SubmissionHeatmapProps = {
   submissionHistory: { date: string; count: number }[];
@@ -35,17 +35,20 @@ export function SubmissionHeatmap({
   const today = new Date();
   const dataByDate = new Map(submissionHistory.map(d => [d.date, d.count]));
 
-  const daysInYear = Array.from({ length: 365 }).map((_, i) =>
-    subDays(today, 364 - i)
-  );
+  const firstDayOfMonth = startOfMonth(today);
+  const lastDayOfMonth = endOfMonth(today);
+  const daysInMonth = eachDayOfInterval({
+    start: firstDayOfMonth,
+    end: lastDayOfMonth,
+  });
 
-  const firstDayOffset = getDay(daysInYear[0]);
+  const firstDayOffset = getDay(firstDayOfMonth) === 0 ? 6 : getDay(firstDayOfMonth) - 1;
 
   return (
     <Card className={cn(className)}>
       <CardHeader>
         <CardTitle>Submission Frequency</CardTitle>
-        <CardDescription>Your coding activity over the last year.</CardDescription>
+        <CardDescription>Your coding activity this month.</CardDescription>
       </CardHeader>
       <CardContent className="overflow-x-auto pt-4">
         <div className="flex gap-3">
@@ -58,7 +61,7 @@ export function SubmissionHeatmap({
             {Array.from({ length: firstDayOffset }).map((_, i) => (
               <div key={`pad-${i}`} className="h-3.5 w-3.5" />
             ))}
-            {daysInYear.map(day => {
+            {daysInMonth.map(day => {
               const dateStr = format(day, 'yyyy-MM-dd');
               const count = dataByDate.get(dateStr) || 0;
               const dateFormatted = format(day, 'MMMM d, yyyy');
