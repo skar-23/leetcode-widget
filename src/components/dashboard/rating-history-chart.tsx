@@ -9,6 +9,7 @@ import type { DotProps } from 'recharts';
 
 type RatingHistoryChartProps = {
   data: { rating: number; date: string }[];
+  maxRating: number;
 };
 
 const CustomizedDot = (props: DotProps & { payload?: any, index?: number, data: any[] }) => {
@@ -43,14 +44,46 @@ const CustomizedDot = (props: DotProps & { payload?: any, index?: number, data: 
 };
 
 
-export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
+export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps) {
     if (!data || data.length === 0) {
         return null;
     }
   const minRating = Math.min(...data.map(h => h.rating));
-  const maxRating = Math.max(...data.map(h => h.rating));
   const ratingBuffer = Math.max(50, (maxRating - minRating) * 0.1);
 
+  const getNiceInterval = (range: number) => {
+    const exponent = Math.floor(Math.log10(range));
+    const fraction = range / Math.pow(10, exponent);
+
+    let niceFraction;
+    if (fraction < 1.5) {
+      niceFraction = 1;
+    } else if (fraction < 3) {
+      niceFraction = 2;
+    } else if (fraction < 7) {
+      niceFraction = 5;
+    } else {
+      niceFraction = 10;
+    }
+
+    const interval = niceFraction * Math.pow(10, exponent - 1);
+    // Suggest some "nice" intervals like 50, 100, 200, 250, 500
+    if (interval < 75) return 50;
+    if (interval < 150) return 100;
+    if (interval < 225) return 200;
+    return 250;
+  };
+  
+  const ratingRange = maxRating - minRating;
+  const tickInterval = getNiceInterval(ratingRange > 0 ? ratingRange : 100);
+
+  const domainMin = Math.floor((minRating - ratingBuffer) / tickInterval) * tickInterval;
+  const domainMax = Math.ceil((maxRating + ratingBuffer) / tickInterval) * tickInterval;
+
+  const ticks: number[] = [];
+  for (let i = domainMin; i <= domainMax; i += tickInterval) {
+    ticks.push(i);
+  }
 
   return (
     <ChartContainer config={{}}>
@@ -67,7 +100,8 @@ export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
           />
           <YAxis 
             hide={true}
-            domain={[minRating - ratingBuffer, maxRating + ratingBuffer]}
+            domain={[domainMin, domainMax]}
+            ticks={ticks}
           />
           <Line
             dataKey="rating"
