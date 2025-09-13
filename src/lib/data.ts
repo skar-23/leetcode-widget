@@ -2,6 +2,9 @@ export type UserData = {
   username: string;
   contestRating: number;
   globalRanking: number;
+  attendedContests: number;
+  topPercentage: number;
+  contestHistory: { rating: number; date: string }[];
   problemsSolved: {
     total: number;
     easy: number;
@@ -16,5 +19,6 @@ export type UserData = {
     name: string;
     icon: string;
     date: string;
+    creationTimestamp: number;
   }[];
 };

@@ -1,0 +1,63 @@
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { RatingHistoryChart } from './rating-history-chart';
+import { RatingDistributionChart } from './rating-distribution-chart';
+
+type ContestPerformanceCardProps = {
+  rating: number;
+  attended: number;
+  topPercentage: number;
+  history: { rating: number; date: string }[];
+  className?: string;
+};
+
+export function ContestPerformanceCard({
+  rating,
+  attended,
+  topPercentage,
+  history,
+  className,
+}: ContestPerformanceCardProps) {
+  return (
+    <Card className={cn(className)}>
+      <CardHeader>
+        <CardTitle>Contest Performance</CardTitle>
+        <CardDescription>
+          An overview of your performance in LeetCode contests.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="col-span-1 md:col-span-2 space-y-4">
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-sm text-muted-foreground">Contest Rating</p>
+              <p className="text-2xl font-bold">{rating}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Attended</p>
+              <p className="text-2xl font-bold">{attended}</p>
+            </div>
+          </div>
+          <div className="h-[200px]">
+            <RatingHistoryChart data={history} />
+          </div>
+        </div>
+        <div className="col-span-1 space-y-4">
+           <div className='text-center'>
+                <p className="text-sm text-muted-foreground">Top</p>
+                <p className="text-2xl font-bold">{topPercentage}%</p>
+            </div>
+          <div className="h-[200px]">
+            <RatingDistributionChart topPercentage={topPercentage} />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

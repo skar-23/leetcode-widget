@@ -1,4 +1,4 @@
-import { BookOpenCheck, Trophy } from 'lucide-react';
+import { BookOpenCheck, Flame, Trophy } from 'lucide-react';
 import { LeetCodeIcon } from '@/components/icons/leetcode-icon';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { SubmissionHeatmap } from '@/components/dashboard/submission-heatmap';
@@ -7,6 +7,7 @@ import { MotivationCard } from '@/components/dashboard/motivation-card';
 import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { UserData } from '@/lib/data';
+import { ContestPerformanceCard } from '@/components/dashboard/contest-performance-card';
 
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
@@ -43,6 +44,15 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
         userContestRanking(username: $username) {
           rating
           topPercentage
+          attendedContestsCount
+        }
+        userContestRankingHistory(username: $username) {
+          attended
+          rating
+          ranking
+          contest {
+            startTime
+          }
         }
         activeDailyCodingChallengeQuestion {
           date
@@ -84,6 +94,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     const matchedUser = data?.matchedUser;
     const activeDailyQuestion = data?.activeDailyCodingChallengeQuestion;
     const contestRanking = data?.userContestRanking;
+    const contestHistory = data?.userContestRankingHistory;
 
     if (!matchedUser) {
       console.error('No matched user found for:', username);
@@ -113,17 +124,29 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     const totalQuestions = data.allQuestionsCount.find((d: any) => d.difficulty === 'All')?.count || 0;
 
     const badges = matchedUser.badges
-      .sort((a: any, b: any) => b.creationDate - a.creationDate)
       .map((badge: any) => ({
         name: badge.name,
         icon: badge.icon,
         date: new Date(badge.creationDate * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      }));
+        creationTimestamp: badge.creationDate
+      }))
+      .sort((a: any, b: any) => b.creationTimestamp - a.creationTimestamp);
     
+    const ratingHistory = contestHistory
+        ?.filter((contest: any) => contest.attended)
+        .map((contest: any) => ({
+            rating: Math.round(contest.rating),
+            date: new Date(contest.contest.startTime * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
+        }))
+        .slice(-10); // get last 10 contests
+
     return {
       username: username,
       contestRating: contestRanking?.rating ? Math.round(contestRanking.rating) : 0,
       globalRanking: matchedUser.profile.ranking,
+      attendedContests: contestRanking?.attendedContestsCount || 0,
+      topPercentage: contestRanking?.topPercentage ? parseFloat(contestRanking.topPercentage.toFixed(2)) : 0,
+      contestHistory: ratingHistory || [],
       problemsSolved: {
         total: totalSolved,
         easy: easySolved,
@@ -167,10 +190,10 @@ export default async function Home() {
 
           {userData && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-              <div className="lg:col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
+               <div className="lg:col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 <StatCard
-                  title="Contest Rating"
-                  value={userData.contestRating}
+                  title="Global Ranking"
+                  value={userData.globalRanking.toLocaleString()}
                   icon={<Trophy className="h-4 w-4 text-muted-foreground" />}
                 />
                 <StatCard
@@ -185,6 +208,14 @@ export default async function Home() {
                 />
               </div>
 
+              <ContestPerformanceCard
+                rating={userData.contestRating}
+                attended={userData.attendedContests}
+                topPercentage={userData.topPercentage}
+                history={userData.contestHistory}
+                className="lg:col-span-4"
+              />
+
               <SubmissionHeatmap
                 submissionHistory={userData.submissionHistory}
                 className="lg:col-span-3"
@@ -192,7 +223,7 @@ export default async function Home() {
 
               <BadgeShowcase
                 totalBadges={userData.badges.length}
-                latestBadge={userData.badges.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]}
+                latestBadge={userData.badges[0]}
                 className="lg:col-span-1"
               />
 
