@@ -46,7 +46,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
         <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
            <Tooltip
             cursor={false}
-            content={<ChartTooltipContent indicator="dot" />}
+            content={<ChartTooltipContent hideIndicator />}
           />
           <XAxis
             dataKey="date"

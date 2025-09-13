@@ -58,7 +58,7 @@ export function ContestPerformanceCard({
             <RatingHistoryChart data={history} maxRating={maxRating} />
           </div>
         </div>
-        <div className="col-span-1 space-y-4">
+        <div className="col-span-1 flex flex-col justify-between">
            <div className='text-center'>
                 <p className="text-sm text-muted-foreground">Top</p>
                 <p className="text-2xl font-bold">{topPercentage}%</p>
