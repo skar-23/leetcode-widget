@@ -37,7 +37,7 @@ export function ContestPerformanceCard({
           An overview of your performance in LeetCode contests.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-1 grid grid-cols-3 text-center gap-4 md:flex md:flex-col md:justify-around">
            <div>
               <p className="text-sm text-muted-foreground">Contest Rating</p>
