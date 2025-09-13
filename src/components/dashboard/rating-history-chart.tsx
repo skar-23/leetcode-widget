@@ -1,16 +1,45 @@
 'use client';
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, Dot } from 'recharts';
 import {
   ChartTooltipContent,
   ChartContainer,
 } from '@/components/ui/chart';
+import type { DotProps } from 'recharts';
 
 type RatingHistoryChartProps = {
   data: { rating: number; date: string }[];
+  maxRating: number;
 };
 
-export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
+const CustomizedDot = (props: DotProps & { payload?: any, maxRating: number }) => {
+  const { cx, cy, stroke, payload, maxRating } = props;
+
+  if (payload && payload.rating === maxRating) {
+    return (
+      <Dot
+        cx={cx}
+        cy={cy}
+        r={6}
+        stroke="hsl(var(--chart-2))"
+        strokeWidth={2}
+        fill="white"
+      />
+    );
+  }
+
+  return (
+    <Dot 
+      cx={cx} 
+      cy={cy} 
+      r={3} 
+      fill="hsl(var(--chart-2))" 
+    />
+  );
+};
+
+
+export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps) {
   return (
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
@@ -29,11 +58,9 @@ export function RatingHistoryChart({ data }: RatingHistoryChartProps) {
           <Line
             dataKey="rating"
             type="monotone"
-            stroke="hsl(var(--primary))"
+            stroke="hsl(var(--chart-2))"
             strokeWidth={2}
-            dot={{
-              fill: 'hsl(var(--primary))',
-            }}
+            dot={<CustomizedDot maxRating={maxRating} />}
             activeDot={{
               r: 6,
             }}

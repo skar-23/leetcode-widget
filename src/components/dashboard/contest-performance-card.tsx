@@ -8,6 +8,7 @@ import {
 import { cn } from '@/lib/utils';
 import { RatingHistoryChart } from './rating-history-chart';
 import { RatingDistributionChart } from './rating-distribution-chart';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 
 type ContestPerformanceCardProps = {
   rating: number;
@@ -24,6 +25,11 @@ export function ContestPerformanceCard({
   history,
   className,
 }: ContestPerformanceCardProps) {
+  const lastRating = history.length > 0 ? history[history.length - 1].rating : 0;
+  const secondLastRating = history.length > 1 ? history[history.length - 2].rating : 0;
+  const trend = lastRating > secondLastRating ? 'up' : lastRating < secondLastRating ? 'down' : 'same';
+  const maxRating = Math.max(...history.map(h => h.rating));
+
   return (
     <Card className={cn(className)}>
       <CardHeader>
@@ -37,7 +43,11 @@ export function ContestPerformanceCard({
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <p className="text-sm text-muted-foreground">Contest Rating</p>
-              <p className="text-2xl font-bold">{rating}</p>
+              <div className="flex items-center justify-center gap-2">
+                 <p className="text-2xl font-bold">{rating}</p>
+                 {trend === 'up' && <ArrowUp className="h-5 w-5 text-green-500" />}
+                 {trend === 'down' && <ArrowDown className="h-5 w-5 text-red-500" />}
+              </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Attended</p>
@@ -45,7 +55,7 @@ export function ContestPerformanceCard({
             </div>
           </div>
           <div className="h-[200px]">
-            <RatingHistoryChart data={history} />
+            <RatingHistoryChart data={history} maxRating={maxRating} />
           </div>
         </div>
         <div className="col-span-1 space-y-4">
