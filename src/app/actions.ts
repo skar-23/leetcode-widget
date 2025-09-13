@@ -1,3 +1,7 @@
+// Note: Server Actions are disabled to support static export (output: 'export' in next.config.ts)
+// To re-enable AI functionality, remove 'output: export' from next.config.ts and update MotivationCard component
+// to use this action instead of the static fallback
+
 'use server';
 
 import {
