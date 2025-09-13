@@ -11,7 +11,7 @@ import { UserData } from '@/lib/data';
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
     const query = `
-      query getUserProfile($username: String!) {
+      query userContestRankingInfo($username: String!) {
         allQuestionsCount {
           difficulty
           count
@@ -33,6 +33,10 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
             streak
             totalActiveDays
             submissionCalendar
+          }
+          contestRanking {
+            rating
+            topPercentage
           }
         }
         activeDailyCodingChallengeQuestion {
@@ -104,7 +108,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     
     return {
       username: username,
-      contestRating: matchedUser.profile.ranking > 0 ? matchedUser.profile.ranking : 0,
+      contestRating: matchedUser.contestRanking?.rating ? Math.round(matchedUser.contestRanking.rating) : 0,
       globalRanking: matchedUser.profile.ranking,
       problemsSolved: {
         total: totalSolved,
