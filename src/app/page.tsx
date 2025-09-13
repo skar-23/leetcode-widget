@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { BookOpenCheck, Flame, Trophy } from 'lucide-react';
 import { LeetCodeIcon } from '@/components/icons/leetcode-icon';
 import { StatCard } from '@/components/dashboard/stat-card';
@@ -8,6 +11,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { UserData } from '@/lib/data';
 import { ContestPerformanceCard } from '@/components/dashboard/contest-performance-card';
 import { ProblemOfDayCard } from '@/components/dashboard/problem-of-day-card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 async function getLeetCodeData(username: string): Promise<UserData | null> {
   try {
@@ -75,8 +79,6 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
         query,
         variables: { username },
       }),
-      // Remove cache: 'no-store' to allow static generation
-      next: { revalidate: 3600 } // Revalidate every hour in production
     });
 
     if (!res.ok) {
@@ -165,10 +167,29 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
   }
 }
 
-
-export default async function Home() {
+export default function Home() {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const username = 'scarlet23';
-  const userData = await getLeetCodeData(username);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getLeetCodeData(username);
+        setUserData(data);
+      } catch (err) {
+        setError('Failed to fetch LeetCode data');
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [username]);
 
   return (
     <TooltipProvider>
@@ -182,13 +203,38 @@ export default async function Home() {
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6">
-          {!userData && (
+          {loading && (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+              <div className="lg:col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                    <Skeleton className="h-4 w-1/2 mb-2" />
+                    <Skeleton className="h-8 w-1/3" />
+                  </div>
+                ))}
+              </div>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className={`rounded-lg border bg-card text-card-foreground shadow-sm p-6 ${i === 0 ? 'lg:col-span-4' : 'lg:col-span-1'}`}>
+                  <Skeleton className="h-6 w-1/2 mb-4" />
+                  <Skeleton className="h-24 w-full" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!loading && error && (
+             <div className="text-center text-destructive">
+                {error}
+             </div>
+          )}
+
+          {!loading && !error && !userData && (
              <div className="text-center text-muted-foreground">
                 Could not find data for user: <strong>{username}</strong>. Please check the username and try again.
              </div>
           )}
 
-          {userData && (
+          {!loading && !error && userData && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
                <div className="lg:col-span-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 <StatCard

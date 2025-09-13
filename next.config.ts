@@ -1,5 +1,8 @@
 import type {NextConfig} from 'next';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
@@ -37,10 +40,13 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: true, // Required for static export
   },
-  output: 'export', // Enable static export for GitHub Pages
-  trailingSlash: true, // Add trailing slash for GitHub Pages
-  basePath: process.env.NODE_ENV === 'production' ? '/leetcode-widget' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/leetcode-widget/' : '',
+  // Enable static export only for GitHub Pages deployment
+  ...(isGitHubPages && {
+    output: 'export',
+    trailingSlash: true,
+    basePath: '/leetcode-widget',
+    assetPrefix: '/leetcode-widget/',
+  }),
 };
 
 export default nextConfig;
