@@ -1,6 +1,6 @@
 'use client';
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, Dot, YAxis } from 'recharts';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, Dot, YAxis, CartesianGrid } from 'recharts';
 import {
   ChartTooltipContent,
   ChartContainer,
@@ -48,6 +48,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+           <CartesianGrid vertical={false} strokeDasharray="3 3" />
            <Tooltip
             cursor={false}
             content={<ChartTooltipContent hideIndicator />}
@@ -60,8 +61,11 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
             tickFormatter={(value) => value.slice(0, 3)}
           />
           <YAxis 
-            hide 
+            axisLine={false}
+            tickLine={false}
+            tickMargin={8}
             domain={[minRating - ratingBuffer, maxRating + ratingBuffer]}
+            tickFormatter={(value) => Math.round(value as number).toString()}
           />
           <Line
             dataKey="rating"
