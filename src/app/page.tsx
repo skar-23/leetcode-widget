@@ -34,12 +34,12 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
             totalActiveDays
             submissionCalendar
           }
-          activeDailyCodingChallengeQuestion {
-            date
-            userStatus
-            question {
-                title
-            }
+        }
+        activeDailyCodingChallengeQuestion {
+          date
+          userStatus
+          question {
+            title
           }
         }
       }
@@ -73,6 +73,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
     }
 
     const matchedUser = data?.matchedUser;
+    const activeDailyQuestion = data?.activeDailyCodingChallengeQuestion;
 
     if (!matchedUser) {
       console.error('No matched user found for:', username);
@@ -113,7 +114,7 @@ async function getLeetCodeData(username: string): Promise<UserData | null> {
       },
       problemsAttempted: totalQuestions,
       currentStreak: matchedUser.userCalendar.streak,
-      solvedProblemOfTheDay: matchedUser.activeDailyCodingChallengeQuestion?.userStatus === 'Finish',
+      solvedProblemOfTheDay: activeDailyQuestion?.userStatus === 'Finish',
       submissionHistory: submissionHistory,
       latestBadge: { // This remains mocked as it's not in the API
         name: 'Welcome!',
