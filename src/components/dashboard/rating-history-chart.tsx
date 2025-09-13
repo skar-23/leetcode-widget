@@ -52,6 +52,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
   const ratingBuffer = Math.max(50, (maxRating - minRating) * 0.1);
 
   const getNiceInterval = (range: number) => {
+    if (range <= 0) return 50;
     const exponent = Math.floor(Math.log10(range));
     const fraction = range / Math.pow(10, exponent);
 
@@ -67,7 +68,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
     }
 
     const interval = niceFraction * Math.pow(10, exponent - 1);
-    // Suggest some "nice" intervals like 50, 100, 200, 250, 500
+    
     if (interval < 75) return 50;
     if (interval < 150) return 100;
     if (interval < 225) return 200;
@@ -75,20 +76,23 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
   };
   
   const ratingRange = maxRating - minRating;
-  const tickInterval = getNiceInterval(ratingRange > 0 ? ratingRange : 100);
+  const tickInterval = getNiceInterval(ratingRange);
 
   const domainMin = Math.floor((minRating - ratingBuffer) / tickInterval) * tickInterval;
   const domainMax = Math.ceil((maxRating + ratingBuffer) / tickInterval) * tickInterval;
 
   const ticks: number[] = [];
-  for (let i = domainMin; i <= domainMax; i += tickInterval) {
-    ticks.push(i);
+  if (domainMin < domainMax && tickInterval > 0) {
+    for (let i = domainMin; i <= domainMax; i += tickInterval) {
+        ticks.push(i);
+    }
   }
+
 
   return (
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border))" />
            <Tooltip
             cursor={false}
