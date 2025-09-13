@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { RatingHistoryChart } from './rating-history-chart';
-import { RatingDistributionChart } from './rating-distribution-chart';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 
 type ContestPerformanceCardProps = {
@@ -58,14 +57,11 @@ export function ContestPerformanceCard({
             <RatingHistoryChart data={history} maxRating={maxRating} />
           </div>
         </div>
-        <div className="col-span-1 flex flex-col justify-between">
+        <div className="col-span-1 flex flex-col justify-center">
            <div className='text-center'>
                 <p className="text-sm text-muted-foreground">Top</p>
                 <p className="text-2xl font-bold">{topPercentage}%</p>
             </div>
-          <div className="h-[200px]">
-            <RatingDistributionChart topPercentage={topPercentage} />
-          </div>
         </div>
       </CardContent>
     </Card>
