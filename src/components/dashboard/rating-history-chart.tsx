@@ -1,6 +1,6 @@
 'use client';
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, Dot } from 'recharts';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, Dot, YAxis } from 'recharts';
 import {
   ChartTooltipContent,
   ChartContainer,
@@ -40,6 +40,10 @@ const CustomizedDot = (props: DotProps & { payload?: any, maxRating: number }) =
 
 
 export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps) {
+  const minRating = Math.min(...data.map(h => h.rating));
+  const ratingBuffer = Math.max(20, (maxRating - minRating) * 0.1);
+
+
   return (
     <ChartContainer config={{}}>
       <ResponsiveContainer width="100%" height="100%">
@@ -54,6 +58,10 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
             axisLine={false}
             tickMargin={8}
             tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <YAxis 
+            hide 
+            domain={[minRating - ratingBuffer, maxRating + ratingBuffer]}
           />
           <Line
             dataKey="rating"
