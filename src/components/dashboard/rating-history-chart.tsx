@@ -1,15 +1,23 @@
 'use client';
 
 import { Line, LineChart, Tooltip, XAxis, Dot, YAxis, ResponsiveContainer, CartesianGrid } from 'recharts';
-import {
-  ChartTooltipContent,
-  ChartContainer,
-} from '@/components/ui/chart';
 import type { DotProps } from 'recharts';
 
 type RatingHistoryChartProps = {
   data: { rating: number; date: string }[];
   maxRating: number;
+};
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border border-border/50 bg-background px-3 py-2 text-xs shadow-xl">
+        <p className="font-medium">{`Rating: ${payload[0].value}`}</p>
+        <p className="text-muted-foreground">{`Date: ${label}`}</p>
+      </div>
+    );
+  }
+  return null;
 };
 
 const CustomizedDot = (props: DotProps & { payload?: any, index?: number, data: any[] }) => {
@@ -86,13 +94,13 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
   }
 
   return (
-    <ChartContainer config={{}}>
+    <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border))" />
            <Tooltip
             cursor={false}
-            content={<ChartTooltipContent hideIndicator />}
+            content={<CustomTooltip />}
           />
           <XAxis
             hide={true}
@@ -115,6 +123,6 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
           />
         </LineChart>
       </ResponsiveContainer>
-    </ChartContainer>
+    </div>
   );
 }
