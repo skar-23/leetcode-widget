@@ -49,7 +49,7 @@ export function RatingHistoryChart({ data, maxRating }: RatingHistoryChartProps)
 
   return (
     <ChartContainer config={{}}>
-        <LineChart data={data} width={274} height={154} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+        <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
            <Tooltip
             cursor={false}
             content={<ChartTooltipContent hideIndicator />}
